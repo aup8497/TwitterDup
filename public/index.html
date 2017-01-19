@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<!--	
+THIS IS THE 8TH TUTORIAL
+
+in this we have added features like :
+you dont need to press refresh button to load the data && we are clearing the text input:lines changed are  62-70,53-55
+
+-->
+
+<!-- steps to implement angjs 
+1.initialize angjs by adding a name for the app in the html tag
+2.inside the script ,we add a  module function to initialize "mittensCtrl" variable of the type 'app'
+3.after intializing the app,we can define as many app.controller functions 
+these app.controller functions have two arguements ,one is the name of the controller,the second is the functionDefinition   
+-->
+<html ng-app="mittens">
+<head>
+	<link rel="icon" type="image/svg" href="twittericon.svg">
+	<title>TwitterDup</title>
+<!--including bootstrap-->	
+	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+<!--including style.css-->	
+	<link rel="stylesheet" type="text/css" href="style.css">
+<!--including angjs-->	
+	<script type="text/javascript" src="angular.min.js"></script>
+	<script type="text/javascript" src="angular-route.js"></script> <!-- by this we can have routes i.e we can have different webpages --> 
+	<script type="text/javascript" src="angular-cookies.js"></script>
+
+	<script type="text/javascript">
+	//this cant be seen on the screen,to see this press f12 and 
+	//then go to console tab
+		//console.log("hello");
+	  	//to initialize the app in angjs(the first parameter is 
+	  	//for the name of the app,the second will be discussed later)
+		var app = angular.module("mittens",['ngRoute'],['ngCookies']); // the second and third arguements are the dependencies,which we are adding
+
+
+		//before initializing the controllers  && between where you initialize the app we have to configure the app
+		//in our app we have two pages(routes) and hence we are declaring two routes by adding ".when" method to $routeProvider 
+ 		app.config(function($routeProvider, $locationProvider) {
+		  $routeProvider
+		  .when('/', {
+		    templateUrl: 'home.html',
+		    controller: 'HomeController',
+		    })  		//dont use ";" here or else youll get error
+		  .when('/signup', {
+		    templateUrl: 'signup.html',  //this is the html content 
+		    controller: 'SignupController',		// this is the node content
+		    });
+
+		  });
+
+
+		//initializing controller(controller is a function,its first argument is the name of the controler )
+		//this is the controller for the home page,all ng-clicks are defined here 
+		app.controller('HomeController' ,function ($scope , $http ,$cookies){  //the parameters are basicallly services which we are using
+			// $scope.meows=[
+			// 'hello there please like this page',
+			// 'and post some comments too',
+			// 'please',
+			// 'hello again'
+			// ];  
+			
+			//$scope.newMeow = 'hi hi';//this is a two way biinding that is ,the variable can be controlled by both app.controller as well as the server
+
+			////////////IMP///////////
+			//newMeow is the String variable while holds the text written down in the text input//
+
+
+			$scope.submitNewMeow = function(){ 
+				//console.log($scope.newMeow);//this logs the variable newMeow in the console 
+				
+				//this next line is sending the data to the server
+				$http.post('/meows',{ newMeow: $scope.newMeow }).then(function(){
+					alert('succes!!');
+					getMeows();//when we submit ,it calls the API again,hence refreshing
+					$scope.newMeow='';//after submitting clears the string in the text input
+
+				});
+
+			}
+
+			//we are calling removeMeow as a variable(i.e we do scope.removeMeow and not function removeMeow() )and not a function because we are calling it from the front end (and not from the server).
+			//same holds good for 'submitNewMeow()' also.
+			//As we are calling the function 'getMeows()' from the server we are declaring it as a function and not a scope variable
+			$scope.removeMeow = function(deletethismeow){
+					$http.put('/meows/remove',{meow: deletethismeow }).then(function(){
+					getMeows();//when we submit ,it calls the API again,hence refreshing
+
+				});				
+			};
+
+			$scope.signin = function(){
+				$http.put('/users/signin',{username : $scope.username,password : $scope.password })
+				.then(function(res){
+					console.log(res.data.token);
+					$cookies.put('token',res.data.token);
+					alert("successfully signed in!");
+				},function(err){
+					alert("could not sign you in,try again");
+
+				});
+
+			}
+
+			function getMeows(){
+
+				$http.get('/meows').then(function(response){
+				$scope.meows=(response.data);
+			});//this is an API call
+
+			}
+
+			getMeows();
+
+		});
+
+
+		app.controller('SignupController' ,function ($scope , $http ,$cookies ){ //here we are specifying the services as the parameters
+			console.log('youre on the signup page');
+
+			$scope.submitSignup = function(){
+				var newUser={
+					username: $scope.username,
+					password: $scope.password 
+				};
+				$http.post('/users',newUser).then(function(){
+					alert("success!");
+				});
+			}	
+
+		});
+
+
+
+ 
+	</script>
+
+<!--
+this tag is stored in a file called style.css in the current folder
+
+<style type="text/css">
+	.feed{
+		margin-left: 100px;
+		margin-top: 50px;
+		margin-right: 100px;
+
+		min-height: 1000px;
+	}
+	.feed h6{
+		border: 1px solid black;
+		padding: 5px;
+	}
+
+	.heading{
+		margin-left: 100px;
+		margin-top:20px;
+	}
+</style>
+--> 
+
+</head>
+<body> 
+	<h1 class="heading"><a href="#/">TwitterDup</a></h1>
+	<!-- To add header you cant write like this: <h1 class="heading" href="/">TwitterDup</h1> -->
+
+	<div ng-view></div>
+</body>
+</html>

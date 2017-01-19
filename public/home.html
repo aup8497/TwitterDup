@@ -1,0 +1,46 @@
+<!--you can put <table/> down here,but as you are using bootstrap we use <div/>  -->
+<div class="row feed">
+	<div class="col-md-4">
+		Login:  
+<!--basically <br> corresponds to \n i.e next line -->	
+		<br><br>
+	   <input type="text" size="43" placeholder="Username" ng-model="username">
+		<br><br>
+	   <input type="password" size="43" placeholder="Password" ng-model="password">	
+	   <br><br>
+	   <button type="button" ng-click="signin()">Sign In</button>
+	   <br><br>
+	   <br><br>
+
+		<a href="#/signup">Not a member? Signup</a>
+	</div>
+	<div class="col-md-8">
+		<div class="new-meow">
+			<input type="text" class="form-control" ng-model="newMeow " placeholder="what tweet do you have today..">
+			<button type="button" class="btn" ng-click="submitNewMeow()" >Submit</button>
+		</div>
+
+
+<!--there are many bootstrap styles like 
+<p/>which stands for paragraph
+<h1/> to <h5/> stands for headings with decreasing size size
+
+-->		
+
+<!--ng-repeat is 'for' loop in angjs
+and in this case it is implemented for the heading h6-->
+		<h6 ng-repeat="i in meows"><!--here meows refers to $scope.meows in the module function,but you dont put scope.meows here -->
+			<span class ="glyphicon glyphicon-user"  aria-hidden="true"></span>
+			{{ i.text }}
+			<!-- when we are using db if we use i, it will send the entire object with all keys and their values-->
+			<!--we can add one more link down here to delete the tweets-->
+			<a href ng-click="removeMeow(i)"><span class ="glyphicon glyphicon-remove"  aria-hidden="true"></span></a>
+
+		</h6>
+		</div>
+<!-- 
+//basically the total of col-md is 12  i.e in this case 4+8=12(here 4 and 8 represents the weightage of the two columns)
+//here md refers to medium size screens i.e if you have small size screens(small window size) the weightage size will be different  
+ -->
+
+</div>
